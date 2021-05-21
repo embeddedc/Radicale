@@ -221,6 +221,11 @@ DEFAULT_CONFIG_SCHEMA: types.CONFIG_SCHEMA = OrderedDict([
             "value": "warning",
             "help": "threshold for the logger",
             "type": logging_level}),
+        ("logfile", {
+            "value": "/tmp/radicale.log",
+            "help": "logfile to write to",
+            "type": filepath}
+        ),
         ("mask_passwords", {
             "value": "True",
             "help": "mask passwords in logs",

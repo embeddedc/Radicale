@@ -31,7 +31,7 @@ import sys
 import threading
 from typing import Any, Callable, ClassVar, Dict, Iterator, Union
 
-from radicale import types
+from radicale import types, config
 
 LOGGER_NAME: str = "radicale"
 LOGGER_FORMAT: str = "[%(asctime)s] [%(ident)s] [%(levelname)s] %(message)s"
@@ -117,6 +117,16 @@ def setup() -> None:
     register_stream = handler.register_stream
     log_record_factory = IdentLogRecordFactory(logging.getLogRecordFactory())
     logging.setLogRecordFactory(log_record_factory)
+
+    """If a logfile is provided, also add a filehandler as logger"""
+    configuration = config.load()
+    logfile = configuration.get("logging", "logfile")
+
+    if logfile:
+        logfile_handler = logging.FileHandler(logfile, mode="w")
+        logger.addHandler(logfile_handler)
+        logger.info(f"Registered filelogger to {logfile}")
+        
     set_level(logging.WARNING)
 
 
@@ -126,6 +136,6 @@ def set_level(level: Union[int, str]) -> None:
         level = getattr(logging, level.upper())
         assert isinstance(level, int)
     logger.setLevel(level)
-    logger.removeFilter(REMOVE_TRACEBACK_FILTER)
+        logger.removeFilter(REMOVE_TRACEBACK_FILTER)
     if level > logging.DEBUG:
         logger.addFilter(REMOVE_TRACEBACK_FILTER)
